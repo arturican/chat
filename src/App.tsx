@@ -1,10 +1,9 @@
-import { Button } from "@/components/ui/button"
+import {Outlet} from "react-router-dom";
 
 export const App = () => {
     return (
         <>
-            <Button>Click me</Button>
-            <button>Click me</button>
+          <Outlet/>
         </>
     )
 }
