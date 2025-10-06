@@ -1,9 +1,12 @@
-export const  App = () => {
+import { Button } from "@/components/ui/button"
+
+export const App = () => {
     return (
-    <>
-      <h1>chat</h1>
-    </>
-  )
+        <>
+            <Button>Click me</Button>
+            <button>Click me</button>
+        </>
+    )
 }
 
 
