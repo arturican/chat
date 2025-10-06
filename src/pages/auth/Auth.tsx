@@ -12,42 +12,36 @@ export const Auth = () => {
   const handleLogin = async () => {};
   const handleSigup = async () => {};
   return (
-    <div className="h-[100vh] w-[100vw] flex items-center justify-center">
-      <div className="h-[80vh] bg-white border-2 border-white text-opacity-90 shadow-2xl w-[80vw] md:w-[90vw] lg:w-[70vw] xl:w-[60vw] rounded-3xl grid xl:grid-cols-2">
-        <div className="flex flex-col gap-10 items-center justify-center">
-          <div className="flex items-center justify-center flex-col">
+    <div className="flex h-[100vh] w-[100vw] items-center justify-center">
+      <div className="text-opacity-90 grid h-[80vh] w-[80vw] rounded-3xl border-2 border-white bg-white shadow-2xl md:w-[90vw] lg:w-[70vw] xl:w-[60vw] xl:grid-cols-1">
+        <div className="flex flex-col items-center justify-center gap-10">
+          <div className="flex flex-col items-center justify-center">
             <div className="flex items-center justify-center">
               <h1 className="text-5xl font-bold md:text-6xl">Welcome</h1>
               <img src={Victory} alt="Victory Emoji" className="h-[100px]" />
             </div>
-            <p className="font-medium text-center">
+            <p className="text-center font-medium">
               Fill in the details to get started with the best chat app!
             </p>
           </div>
-          <div className="flex items-center justify-center w-full">
+          <div className="flex w-full items-center justify-center">
             <Tabs className="w-3/4">
-              <TabsList className="bg-transparent rounded-none w-full">
+              <TabsList className="w-full rounded-none bg-transparent">
                 <TabsTrigger
                   value="login"
-                  className="data-[state=active]:bg-transparent
-        text-black text-opacity-90 border-b-2 rounded-none w-full
-        data-[state=active]:text-black data-[state=active]:font-semibold
-        data-[state=active]:border-b-purple-500 p-3 transition-all duration-300"
+                  className="text-opacity-90 w-full rounded-none border-b-2 p-3 text-black transition-all duration-300 data-[state=active]:border-b-purple-500 data-[state=active]:bg-transparent data-[state=active]:font-semibold data-[state=active]:text-black"
                 >
                   Login
                 </TabsTrigger>
                 <TabsTrigger
                   value="signup"
-                  className="data-[state=active]:bg-transparent
-        text-black text-opacity-90 border-b-2 rounded-none w-full
-        data-[state=active]:text-black data-[state=active]:font-semibold
-        data-[state=active]:border-b-purple-500 p-3 transition-all duration-300"
+                  className="text-opacity-90 w-full rounded-none border-b-2 p-3 text-black transition-all duration-300 data-[state=active]:border-b-purple-500 data-[state=active]:bg-transparent data-[state=active]:font-semibold data-[state=active]:text-black"
                 >
                   Signup
                 </TabsTrigger>
               </TabsList>
 
-              <TabsContent className="flex flex-col gap-5 mt-10" value="login">
+              <TabsContent className="mt-10 flex flex-col gap-5" value="login">
                 <Input
                   placeholder="email"
                   type="email"
@@ -66,7 +60,7 @@ export const Auth = () => {
                   Login
                 </Button>
               </TabsContent>
-              <TabsContent className="flex flex-col gap-5 mt-10" value="signup">
+              <TabsContent className="mt-10 flex flex-col gap-5" value="signup">
                 <Input
                   placeholder="Email"
                   type="email"
