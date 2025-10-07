@@ -1,13 +1,10 @@
 import Victory from '@/assets/victory.svg';
-import {
-  Tabs,
-  TabsContent,
-  TabsList,
-  TabsTrigger,
-} from '@/components/ui/tabs.tsx';
+import { Input } from 'client/src/components/ui/input';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from 'client/src/components/ui/tabs';
 import { useState } from 'react';
-import { Input } from '@/components/ui/input.tsx';
-import { Button } from '@/components/ui/button.tsx';
+import {Button} from "../../components/ui/button.tsx";
+
+
 
 export const Auth = () => {
   const [email, setEmail] = useState('');
