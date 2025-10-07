@@ -1,1 +1,5 @@
-pnpm lint-staged
+cd client || exit 1
+if [ ! -d node_modules ]; then
+  pnpm i --silent || pnpm i
+fi
+pnpm exec lint-staged --allow-empty

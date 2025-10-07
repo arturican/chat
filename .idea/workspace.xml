@@ -5,35 +5,24 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="d26c6cf9-304f-43df-be0e-a4657f359ee0" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/client/.gitignore" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.husky/pre-commit" beforeDir="false" afterPath="$PROJECT_DIR$/client/.husky/pre-commit" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.lintstagedrc" beforeDir="false" afterPath="$PROJECT_DIR$/client/.lintstagedrc" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.prettierignore" beforeDir="false" afterPath="$PROJECT_DIR$/client/.prettierignore" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/client/README.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/src/pages/auth/Auth.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/pages/auth/Auth.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/components.json" beforeDir="false" afterPath="$PROJECT_DIR$/client/components.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/eslint.config.js" beforeDir="false" afterPath="$PROJECT_DIR$/client/eslint.config.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/client/index.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/client/package.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/pnpm-lock.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/client/pnpm-lock.yaml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/App.css" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/App.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/App.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/App.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/assets/login2.png" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/assets/login2.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/assets/lottie-json.json" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/assets/lottie-json.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/assets/victory.svg" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/assets/victory.svg" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/components/ui/button.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/components/ui/button.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/components/ui/input.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/components/ui/input.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/components/ui/tabs.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/components/ui/tabs.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/index.css" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/index.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/lib/utils.ts" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/lib/utils.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/main.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/pages/chat/Chat.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/pages/chat/Chat.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/pages/profile/Profile.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/pages/profile/Profile.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/router/router.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/router/router.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/tsconfig.app.json" beforeDir="false" afterPath="$PROJECT_DIR$/client/tsconfig.app.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/tsconfig.json" beforeDir="false" afterPath="$PROJECT_DIR$/client/tsconfig.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/tsconfig.node.json" beforeDir="false" afterPath="$PROJECT_DIR$/client/tsconfig.node.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/vite.config.ts" beforeDir="false" afterPath="$PROJECT_DIR$/client/vite.config.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/node_modules/.bin/husky" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/node_modules/.modules.yaml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/node_modules/.pnpm-workspace-state-v1.json" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/node_modules/.pnpm/husky@9.1.7/node_modules/husky/LICENSE" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/node_modules/.pnpm/husky@9.1.7/node_modules/husky/README.md" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/node_modules/.pnpm/husky@9.1.7/node_modules/husky/bin.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/node_modules/.pnpm/husky@9.1.7/node_modules/husky/husky" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/node_modules/.pnpm/husky@9.1.7/node_modules/husky/index.d.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/node_modules/.pnpm/husky@9.1.7/node_modules/husky/index.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/node_modules/.pnpm/husky@9.1.7/node_modules/husky/node_modules/.bin/husky" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/node_modules/.pnpm/husky@9.1.7/node_modules/husky/package.json" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/node_modules/.pnpm/lock.yaml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/node_modules/husky" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/package.json" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/pnpm-lock.yaml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/client/package.json" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -82,11 +71,11 @@
 }]]></component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="\\wsl.localhost\Ubuntu\home\arturican\project\chat" />
       <recent name="\\wsl.localhost\Ubuntu\home\arturican\project\chat\client" />
       <recent name="\\wsl.localhost\Ubuntu\home\arturican\project\chat\src\assets" />
       <recent name="\\wsl.localhost\Ubuntu\home\arturican\project\chat\src\pages" />
       <recent name="\\wsl.localhost\Ubuntu\home\arturican\project\chat\src" />
-      <recent name="\\wsl.localhost\Ubuntu\home\arturican\project\chat" />
     </key>
   </component>
   <component name="SharedIndexes">
@@ -106,7 +95,7 @@
       <workItem from="1759729698600" duration="59000" />
       <workItem from="1759729769095" duration="142000" />
       <workItem from="1759730019504" duration="12907000" />
-      <workItem from="1759814773364" duration="4857000" />
+      <workItem from="1759814773364" duration="6080000" />
     </task>
     <servers />
   </component>
