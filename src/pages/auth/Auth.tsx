@@ -1,5 +1,10 @@
 import Victory from '@/assets/victory.svg';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs.tsx';
+import {
+  Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger,
+} from '@/components/ui/tabs.tsx';
 import { useState } from 'react';
 import { Input } from '@/components/ui/input.tsx';
 import { Button } from '@/components/ui/button.tsx';
@@ -13,7 +18,11 @@ export const Auth = () => {
   const handleSigup = async () => {};
   return (
     <div className="flex h-[100vh] w-[100vw] items-center justify-center">
-      <div className="text-opacity-90 grid h-[80vh] w-[80vw] rounded-3xl border-2 border-white bg-white shadow-2xl md:w-[90vw] lg:w-[70vw] xl:w-[60vw] xl:grid-cols-1">
+      <div
+        className="text-opacity-90 grid h-[80vh] w-[80vw] rounded-3xl border-2
+          border-white bg-white shadow-2xl md:w-[90vw] lg:w-[70vw] xl:w-[60vw]
+          xl:grid-cols-1"
+      >
         <div className="flex flex-col items-center justify-center gap-10">
           <div className="flex flex-col items-center justify-center">
             <div className="flex items-center justify-center">
@@ -29,13 +38,23 @@ export const Auth = () => {
               <TabsList className="w-full rounded-none bg-transparent">
                 <TabsTrigger
                   value="login"
-                  className="text-opacity-90 w-full rounded-none border-b-2 p-3 text-black transition-all duration-300 data-[state=active]:border-b-purple-500 data-[state=active]:bg-transparent data-[state=active]:font-semibold data-[state=active]:text-black"
+                  className="text-opacity-90 w-full rounded-none border-b-2 p-3
+                    text-black transition-all duration-300
+                    data-[state=active]:border-b-purple-500
+                    data-[state=active]:bg-transparent
+                    data-[state=active]:font-semibold
+                    data-[state=active]:text-black"
                 >
                   Login
                 </TabsTrigger>
                 <TabsTrigger
                   value="signup"
-                  className="text-opacity-90 w-full rounded-none border-b-2 p-3 text-black transition-all duration-300 data-[state=active]:border-b-purple-500 data-[state=active]:bg-transparent data-[state=active]:font-semibold data-[state=active]:text-black"
+                  className="text-opacity-90 w-full rounded-none border-b-2 p-3
+                    text-black transition-all duration-300
+                    data-[state=active]:border-b-purple-500
+                    data-[state=active]:bg-transparent
+                    data-[state=active]:font-semibold
+                    data-[state=active]:text-black"
                 >
                   Signup
                 </TabsTrigger>

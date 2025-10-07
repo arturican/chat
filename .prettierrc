@@ -4,14 +4,17 @@
   "trailingComma": "all",
   "arrowParens": "avoid",
   "tabWidth": 2,
-  "printWidth": 100,
+  "printWidth": 80,
   "jsxSingleQuote": false,
-   "plugins": [
-    "prettier-plugin-classnames",
+
+  "plugins": [
     "prettier-plugin-tailwindcss",
-    "prettier-plugin-merge",
+    "prettier-plugin-classnames",
+    "prettier-plugin-merge"
   ],
+
   "customFunctions": ["cn", "clsx", "cva"],
   "tailwindFunctions": ["cn", "clsx", "cva"],
   "endingPosition": "absolute"
 }
+
