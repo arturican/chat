@@ -6,6 +6,10 @@
   "tabWidth": 2,
   "printWidth": 100,
   "jsxSingleQuote": false,
-  "plugins": ["prettier-plugin-tailwindcss"],
+  "plugins": [
+    "prettier-plugin-classnames",
+    "prettier-plugin-tailwindcss",
+    "prettier-plugin-merge"
+  ],
   "tailwindFunctions": ["clsx", "cn", "classnames"]
 }
