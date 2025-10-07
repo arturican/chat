@@ -1,8 +1,3 @@
 export const Chat = () => {
-    return (
-        <>
-            chat
-        </>
-    );
+  return <>chat</>;
 };
-

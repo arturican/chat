@@ -6,10 +6,12 @@
   "tabWidth": 2,
   "printWidth": 100,
   "jsxSingleQuote": false,
-  "plugins": [
+   "plugins": [
     "prettier-plugin-classnames",
     "prettier-plugin-tailwindcss",
-    "prettier-plugin-merge"
+    "prettier-plugin-merge",
   ],
-  "tailwindFunctions": ["clsx", "cn", "classnames"]
+  "customFunctions": ["cn", "clsx", "cva"],
+  "tailwindFunctions": ["cn", "clsx", "cva"],
+  "endingPosition": "absolute"
 }
