@@ -1,13 +1,13 @@
 import Victory from '@/assets/victory.svg';
-import { Input } from 'client/src/components/ui/input';
+import { useState } from 'react';
+import { Button } from '@/components/ui/button.tsx';
+import { Input } from '@/components/ui/input.tsx';
 import {
   Tabs,
   TabsContent,
   TabsList,
   TabsTrigger,
-} from 'client/src/components/ui/tabs';
-import { useState } from 'react';
-import { Button } from '../../components/ui/button.tsx';
+} from '@/components/ui/tabs.tsx';
 
 export const Auth = () => {
   const [email, setEmail] = useState('');
@@ -15,7 +15,7 @@ export const Auth = () => {
   const [confirmPassword, setConfirmPassword] = useState('');
 
   const handleLogin = async () => {};
-  const handleSigup = async () => {};
+  const handleSignup = async () => {};
   return (
     <div className="flex h-[100vh] w-[100vw] items-center justify-center">
       <div
@@ -101,7 +101,7 @@ export const Auth = () => {
                   value={confirmPassword}
                   onChange={e => setConfirmPassword(e.target.value)}
                 />
-                <Button className={'rounded-full p-6'} onClick={handleSigup}>
+                <Button className={'rounded-full p-6'} onClick={handleSignup}>
                   Signup
                 </Button>
               </TabsContent>
