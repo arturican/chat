@@ -13,7 +13,7 @@ export const Auth = () => {
   const handleSigup = async () => {};
   return (
     <div className="flex h-[100vh] w-[100vw] items-center justify-center">
-      <div className="text-opacity-90 grid h-[80vh] w-[80vw] rounded-3xl border-2 border-white bg-white shadow-2xl md:w-[90vw] lg:w-[70vw] xl:w-[60vw] xl:grid-cols-2">
+      <div className="text-opacity-90 grid h-[80vh] w-[80vw] rounded-3xl border-2 border-white bg-white shadow-2xl md:w-[90vw] lg:w-[70vw] xl:w-[60vw] xl:grid-cols-1">
         <div className="flex flex-col items-center justify-center gap-10">
           <div className="flex flex-col items-center justify-center">
             <div className="flex items-center justify-center">
