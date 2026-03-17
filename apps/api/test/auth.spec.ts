@@ -85,6 +85,40 @@ describe('AuthController', () => {
     );
   });
 
+  it('rejects duplicate email registration', async () => {
+    await request(app.getHttpServer()).post('/api/auth/register').send({
+      email: 'duplicate@example.com',
+      password: 'supersecret1',
+      username: 'duplicate_one',
+    });
+
+    const response = await request(app.getHttpServer()).post('/api/auth/register').send({
+      email: 'duplicate@example.com',
+      password: 'supersecret1',
+      username: 'duplicate_two',
+    });
+
+    expect(response.status).toBe(409);
+    expect(response.body.code).toBe('email_taken');
+  });
+
+  it('rejects duplicate username registration', async () => {
+    await request(app.getHttpServer()).post('/api/auth/register').send({
+      email: 'first@example.com',
+      password: 'supersecret1',
+      username: 'shared_name',
+    });
+
+    const response = await request(app.getHttpServer()).post('/api/auth/register').send({
+      email: 'second@example.com',
+      password: 'supersecret1',
+      username: 'shared_name',
+    });
+
+    expect(response.status).toBe(409);
+    expect(response.body.code).toBe('username_taken');
+  });
+
   it('rejects invalid login credentials', async () => {
     await request(app.getHttpServer()).post('/api/auth/register').send({
       email: 'user@example.com',
@@ -126,6 +160,42 @@ describe('AuthController', () => {
 
     expect(reusedResponse.status).toBe(401);
     expect(reusedResponse.body.code).toBe('invalid_refresh_token');
+  });
+
+  it('rejects expired refresh sessions', async () => {
+    const registerResponse = await request(app.getHttpServer()).post('/api/auth/register').send({
+      email: 'expired@example.com',
+      password: 'supersecret1',
+      username: 'expired_user',
+    });
+    const refreshCookie = getCookie(registerResponse);
+    const session = await prisma.session.findFirstOrThrow({
+      where: {
+        user: {
+          email: 'expired@example.com',
+        },
+      },
+      orderBy: {
+        createdAt: 'desc',
+      },
+    });
+
+    await prisma.session.update({
+      where: {
+        id: session.id,
+      },
+      data: {
+        expiresAt: new Date(Date.now() - 60_000),
+      },
+    });
+
+    const refreshResponse = await request(app.getHttpServer())
+      .post('/api/auth/refresh')
+      .set('Cookie', refreshCookie)
+      .send();
+
+    expect(refreshResponse.status).toBe(401);
+    expect(refreshResponse.body.code).toBe('invalid_refresh_token');
   });
 
   it('revokes the session on logout', async () => {

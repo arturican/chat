@@ -9,9 +9,13 @@ The repository is no longer an empty starter pack.
 Implemented now:
 
 - pnpm workspace monorepo
-- `apps/web` with Next.js App Router bootstrap
-- `apps/api` with NestJS + Fastify bootstrap
+- `apps/web` with Next.js App Router auth routes and protected app shell
+- `apps/api` with NestJS + Fastify bootstrap plus auth API
 - `packages/contracts` with shared HTTP and WebSocket contract types
+- Prisma schema, migration, and generated database client for `users`, `profiles`, `sessions`
+- register / login / refresh / logout / me auth flow
+- httpOnly refresh cookie + in-memory access token strategy
+- backend auth integration tests
 - Docker Compose for PostgreSQL and MinIO
 - shared TypeScript, ESLint, Prettier, Husky, and lint-staged setup
 - root `pnpm dev`, `build`, `lint`, `typecheck`, `test`, `test:e2e` scripts
@@ -19,8 +23,6 @@ Implemented now:
 
 Not implemented yet:
 
-- Prisma schema and database client
-- auth flow
 - chats
 - messages history
 - realtime gateway
@@ -64,6 +66,15 @@ Start local infrastructure:
 docker compose up -d
 ```
 
+Apply database migrations:
+
+```bash
+set -a
+. apps/api/.env.example
+set +a
+pnpm --filter @pulsechat/api prisma:migrate:deploy
+```
+
 Run both apps together:
 
 ```bash
@@ -90,15 +101,28 @@ Manual checks:
 
 ```bash
 curl http://127.0.0.1:4000/api/health
-open http://127.0.0.1:3000
+open http://127.0.0.1:3000/login
 ```
 
-Expected bootstrap result:
+Expected auth-phase result:
 
-- web shell is available on `http://127.0.0.1:3000`
-- api health endpoint responds on `http://127.0.0.1:4000/api/health`
+- register and login pages are available on `http://127.0.0.1:3000/login` and `http://127.0.0.1:3000/register`
+- the root route `/` redirects into the protected shell only after refresh + `GET /api/me`
+- auth endpoints respond on `http://127.0.0.1:4000/api/auth/*`
+- api health endpoint still responds on `http://127.0.0.1:4000/api/health`
 - PostgreSQL is exposed on `localhost:5432`
 - MinIO is exposed on `localhost:9000` and `localhost:9001`
+
+Manual auth smoke via API:
+
+```bash
+curl -i -c /tmp/pulsechat.cookie \
+  -H 'content-type: application/json' \
+  -d '{"email":"demo@example.com","password":"supersecret1","username":"demo_user"}' \
+  http://127.0.0.1:4000/api/auth/register
+
+curl -i -b /tmp/pulsechat.cookie -X POST http://127.0.0.1:4000/api/auth/refresh
+```
 
 ## Current Development Policy
 
@@ -110,10 +134,4 @@ Expected bootstrap result:
 
 ## Current Next Phase
 
-The next implementation target is **Phase 1 — auth**.
-
-Recommended first auth sub-step:
-
-1. Add Prisma schema for `users`, `profiles`, and `sessions`.
-2. Wire Prisma into `apps/api`.
-3. Only then build register/login/refresh/logout.
+The next implementation target is **Phase 2 — chats**.
