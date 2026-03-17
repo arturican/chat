@@ -39,20 +39,18 @@ const contentByMode: Record<
   }
 > = {
   login: {
-    badge: 'Auth / Login',
-    title: 'Reconnect to the protected PulseChat shell.',
-    subtitle:
-      'Access tokens stay in memory, refresh lives in an httpOnly cookie, and the app shell rehydrates itself on reload.',
+    badge: 'Welcome Back',
+    title: 'Sign in and pick up your conversations.',
+    subtitle: 'Jump back into PulseChat and continue where you left off.',
     submitLabel: 'Log in',
     alternateLabel: 'Need an account?',
     alternateHref: '/register',
     alternateText: 'Create one',
   },
   register: {
-    badge: 'Auth / Register',
-    title: 'Create the first real PulseChat identity.',
-    subtitle:
-      'This Phase 1 flow creates your user, profile, and refresh-backed session so later chat phases can layer on top cleanly.',
+    badge: 'Join PulseChat',
+    title: 'Create your account and start chatting.',
+    subtitle: 'Set up your profile once and you will be ready to open conversations right away.',
     submitLabel: 'Create account',
     alternateLabel: 'Already registered?',
     alternateHref: '/login',
@@ -105,19 +103,19 @@ export function AuthFormCard({ mode }: AuthFormCardProps) {
 
           <div className="auth-stat-grid">
             <article className="auth-stat-card">
-              <span className="auth-stat-label">Transport split</span>
-              <strong>HTTP auth, WS later</strong>
+              <span className="auth-stat-label">Private by default</span>
+              <strong>Your account, your space</strong>
               <p>
-                History and identity stay on HTTP now, while live messaging waits for the next
-                phase.
+                Keep your profile ready, move between devices easily, and come back without
+                friction.
               </p>
             </article>
             <article className="auth-stat-card">
-              <span className="auth-stat-label">Session model</span>
-              <strong>Cookie + memory</strong>
+              <span className="auth-stat-label">Built for momentum</span>
+              <strong>Fast to open, easy to continue</strong>
               <p>
-                Refresh token remains opaque to the browser app while access tokens are recreated on
-                demand.
+                Sign in once, return later, and keep moving through your conversations without extra
+                setup.
               </p>
             </article>
           </div>
@@ -188,8 +186,7 @@ export function AuthFormCard({ mode }: AuthFormCardProps) {
               </p>
             ) : (
               <p className="feedback feedback-neutral">
-                Protected routes stay closed until this flow returns both a cookie-backed refresh
-                session and a valid `me` profile.
+                Use the details for your PulseChat account to continue.
               </p>
             )}
 

@@ -32,13 +32,13 @@ export function AppHome() {
     <main className="app-screen">
       <div className="shell app-shell">
         <section className="hero app-hero">
-          <span className="badge">Protected App Shell</span>
+          <span className="badge">PulseChat</span>
           <div className="app-hero-head">
             <div>
-              <h1 className="title app-title">Phase 1 auth is now gating the real root route.</h1>
+              <h1 className="title app-title">Your account is ready. Conversations are next.</h1>
               <p className="subtitle app-subtitle">
-                The refresh cookie restored this shell, the access token lives only in memory, and
-                the next phase can now build chats on top of a stable identity layer.
+                We have your profile in place, so the home screen is ready to grow into your full
+                chat workspace.
               </p>
             </div>
 
@@ -55,7 +55,7 @@ export function AppHome() {
 
         <section className="app-grid">
           <article className="card app-card">
-            <h2>Current User</h2>
+            <h2>Current Profile</h2>
             <strong>{session.user?.username ?? 'session-user'}</strong>
             <p>{session.user?.email ?? 'No user loaded.'}</p>
             <div className="profile-pill">
@@ -65,24 +65,23 @@ export function AppHome() {
           </article>
 
           <article className="card app-card">
-            <h2>Session Status</h2>
-            <strong className="status">Authenticated</strong>
+            <h2>Account Status</h2>
+            <strong className="status">Ready</strong>
             <p>
-              Protected routing now depends on refresh bootstrapping and a follow-up `GET /me`
-              validation.
+              Your account is active and prepared for direct messages, group spaces, and history.
             </p>
             <div className="session-chip-row">
-              <span className="session-chip">refresh cookie: active</span>
-              <span className="session-chip">access token: in memory</span>
+              <span className="session-chip">Signed in</span>
+              <span className="session-chip">Profile loaded</span>
             </div>
           </article>
 
           <article className="card app-card empty-card">
-            <h2>Next Phase</h2>
-            <strong>No chats yet</strong>
+            <h2>Coming Up</h2>
+            <strong>No conversations yet</strong>
             <p>
-              This empty state is intentional: auth is complete, while chat list, members, and
-              message history begin in the next implementation step.
+              The next update fills this space with your chat list, open conversations, and message
+              history.
             </p>
           </article>
         </section>

@@ -54,9 +54,9 @@ export function AppGate({ children }: AuthGateProps) {
   if (session.status === 'bootstrapping') {
     return (
       <AuthStateScreen
-        eyebrow="Session Sync"
+        eyebrow="Opening"
         title="Restoring your PulseChat session."
-        description="We are checking the refresh cookie and pulling your current profile before the app shell opens."
+        description="We are getting your account ready so your workspace opens in the right state."
       />
     );
   }
@@ -65,12 +65,11 @@ export function AppGate({ children }: AuthGateProps) {
     return (
       <AuthStateScreen
         eyebrow="Connection Error"
-        title="PulseChat could not restore the protected shell."
+        title="PulseChat could not open your workspace."
         description={
-          session.errorMessage ??
-          'The auth session could not be restored. Retry once the API is reachable again.'
+          session.errorMessage ?? 'We could not restore your session just now. Please try again.'
         }
-        actionLabel="Retry session check"
+        actionLabel="Try again"
         onAction={session.retryBootstrap}
       />
     );
@@ -80,8 +79,8 @@ export function AppGate({ children }: AuthGateProps) {
     return (
       <AuthStateScreen
         eyebrow="Redirecting"
-        title="Protected routes need an active session."
-        description="Sending you to the login page so we can restore access cleanly."
+        title="Sign in to continue."
+        description="Sending you to the login page so you can open your PulseChat workspace."
       />
     );
   }
@@ -102,9 +101,9 @@ export function GuestGate({ children }: AuthGateProps) {
   if (session.status === 'bootstrapping') {
     return (
       <AuthStateScreen
-        eyebrow="Session Check"
-        title="Checking whether you already have access."
-        description="If the refresh cookie is still valid, we will skip the form and reopen your app shell automatically."
+        eyebrow="Checking"
+        title="Looking for your active session."
+        description="If you are already signed in, we will take you straight back to your workspace."
       />
     );
   }
@@ -112,13 +111,10 @@ export function GuestGate({ children }: AuthGateProps) {
   if (session.status === 'error') {
     return (
       <AuthStateScreen
-        eyebrow="Auth Unavailable"
-        title="PulseChat cannot reach the auth API right now."
-        description={
-          session.errorMessage ??
-          'Retry once the API is online again so login and refresh can continue normally.'
-        }
-        actionLabel="Retry auth check"
+        eyebrow="Connection Error"
+        title="PulseChat cannot sign you in right now."
+        description={session.errorMessage ?? 'Please try again in a moment.'}
+        actionLabel="Try again"
         onAction={session.retryBootstrap}
       />
     );
@@ -128,8 +124,8 @@ export function GuestGate({ children }: AuthGateProps) {
     return (
       <AuthStateScreen
         eyebrow="Redirecting"
-        title="Your session is already active."
-        description="Reopening the protected shell instead of showing auth forms again."
+        title="You are already signed in."
+        description="Opening your PulseChat workspace now."
       />
     );
   }
