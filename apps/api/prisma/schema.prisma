@@ -17,6 +17,7 @@ model User {
   sessions     Session[]
   createdChats Chat[]       @relation("ChatCreator")
   chatMembers  ChatMember[]
+  messages     Message[]
 
   @@map("users")
 }
@@ -60,6 +61,7 @@ model Chat {
   updatedAt   DateTime     @updatedAt @map("updated_at") @db.Timestamptz(3)
   createdBy   User         @relation("ChatCreator", fields: [createdById], references: [id], onDelete: Cascade)
   members     ChatMember[]
+  messages    Message[]
 
   @@index([type], map: "chats_type_idx")
   @@index([updatedAt], map: "chats_updated_at_idx")
@@ -78,6 +80,25 @@ model ChatMember {
   @@index([userId, joinedAt], map: "chat_members_user_joined_idx")
   @@index([chatId, role], map: "chat_members_chat_role_idx")
   @@map("chat_members")
+}
+
+model Message {
+  id               String    @id @default(uuid()) @db.Uuid
+  chatId           String    @map("chat_id") @db.Uuid
+  authorId         String    @map("author_id") @db.Uuid
+  body             String
+  replyToMessageId String?   @map("reply_to_message_id") @db.Uuid
+  createdAt        DateTime  @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt        DateTime  @updatedAt @map("updated_at") @db.Timestamptz(3)
+  chat             Chat      @relation(fields: [chatId], references: [id], onDelete: Cascade)
+  author           User      @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  replyTo          Message?  @relation("MessageReplies", fields: [replyToMessageId], references: [id], onDelete: SetNull)
+  replies          Message[] @relation("MessageReplies")
+
+  @@index([chatId, createdAt], map: "messages_chat_created_idx")
+  @@index([authorId, createdAt], map: "messages_author_created_idx")
+  @@index([replyToMessageId], map: "messages_reply_to_idx")
+  @@map("messages")
 }
 
 enum ChatType {

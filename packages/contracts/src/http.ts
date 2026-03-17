@@ -1,4 +1,11 @@
-import type { Cursor, IsoDateString, PublicChat, PublicUser } from './shared';
+import type {
+  Cursor,
+  EntityId,
+  IsoDateString,
+  PublicChat,
+  PublicMessage,
+  PublicUser,
+} from './shared';
 
 export interface ApiErrorResponse {
   code: string;
@@ -59,4 +66,16 @@ export interface ChatListResponse {
 
 export interface ChatDetailsResponse {
   chat: PublicChat;
+}
+
+export interface ChatMessagesQuery {
+  cursor?: Cursor;
+  limit?: number;
+}
+
+export type ChatMessagesResponse = CursorPageResponse<PublicMessage>;
+
+export interface CreateMessageRequest {
+  body: string;
+  replyToMessageId?: EntityId | null;
 }

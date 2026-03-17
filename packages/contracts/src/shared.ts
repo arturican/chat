@@ -22,3 +22,19 @@ export interface PublicChat {
   createdAt: IsoDateString;
   updatedAt: IsoDateString;
 }
+
+export interface PublicMessageReply {
+  id: EntityId;
+  body: string;
+  author: PublicUser;
+}
+
+export interface PublicMessage {
+  id: EntityId;
+  chatId: EntityId;
+  body: string;
+  author: PublicUser;
+  replyTo: Nullable<PublicMessageReply>;
+  createdAt: IsoDateString;
+  updatedAt: IsoDateString;
+}
