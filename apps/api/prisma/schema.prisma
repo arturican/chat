@@ -8,13 +8,15 @@ datasource db {
 }
 
 model User {
-  id           String    @id @default(uuid()) @db.Uuid
-  email        String    @unique
-  passwordHash String    @map("password_hash")
-  createdAt    DateTime  @default(now()) @map("created_at") @db.Timestamptz(3)
-  updatedAt    DateTime  @updatedAt @map("updated_at") @db.Timestamptz(3)
+  id           String       @id @default(uuid()) @db.Uuid
+  email        String       @unique
+  passwordHash String       @map("password_hash")
+  createdAt    DateTime     @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt    DateTime     @updatedAt @map("updated_at") @db.Timestamptz(3)
   profile      Profile?
   sessions     Session[]
+  createdChats Chat[]       @relation("ChatCreator")
+  chatMembers  ChatMember[]
 
   @@map("users")
 }
@@ -47,4 +49,43 @@ model Session {
   @@index([userId], map: "sessions_user_id_idx")
   @@index([expiresAt], map: "sessions_expires_at_idx")
   @@map("sessions")
+}
+
+model Chat {
+  id          String       @id @default(uuid()) @db.Uuid
+  type        ChatType
+  title       String?
+  createdById String       @map("created_by_id") @db.Uuid
+  createdAt   DateTime     @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt   DateTime     @updatedAt @map("updated_at") @db.Timestamptz(3)
+  createdBy   User         @relation("ChatCreator", fields: [createdById], references: [id], onDelete: Cascade)
+  members     ChatMember[]
+
+  @@index([type], map: "chats_type_idx")
+  @@index([updatedAt], map: "chats_updated_at_idx")
+  @@map("chats")
+}
+
+model ChatMember {
+  chatId   String         @map("chat_id") @db.Uuid
+  userId   String         @map("user_id") @db.Uuid
+  role     ChatMemberRole @default(MEMBER)
+  joinedAt DateTime       @default(now()) @map("joined_at") @db.Timestamptz(3)
+  chat     Chat           @relation(fields: [chatId], references: [id], onDelete: Cascade)
+  user     User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@id([chatId, userId])
+  @@index([userId, joinedAt], map: "chat_members_user_joined_idx")
+  @@index([chatId, role], map: "chat_members_chat_role_idx")
+  @@map("chat_members")
+}
+
+enum ChatType {
+  DIRECT
+  GROUP
+}
+
+enum ChatMemberRole {
+  OWNER
+  MEMBER
 }

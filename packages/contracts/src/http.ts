@@ -1,4 +1,4 @@
-import type { Cursor, IsoDateString, PublicUser } from './shared';
+import type { Cursor, IsoDateString, PublicChat, PublicUser } from './shared';
 
 export interface ApiErrorResponse {
   code: string;
@@ -42,4 +42,21 @@ export interface RefreshResponse {
 
 export interface MeResponse {
   user: PublicUser;
+}
+
+export interface CreateDirectChatRequest {
+  username: string;
+}
+
+export interface CreateGroupChatRequest {
+  title: string;
+  memberUsernames: string[];
+}
+
+export interface ChatListResponse {
+  chats: PublicChat[];
+}
+
+export interface ChatDetailsResponse {
+  chat: PublicChat;
 }

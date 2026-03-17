@@ -1,5 +1,5 @@
-import { AppHome } from '../../src/features/auth/app-home';
+import { ChatWorkspace } from '../../src/features/chats/chat-workspace';
 
 export default function AppHomePage() {
-  return <AppHome />;
+  return <ChatWorkspace />;
 }
