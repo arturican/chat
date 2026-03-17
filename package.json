@@ -1,10 +1,31 @@
 {
-	"name": "chat",
-	"private": true,
-	"scripts": {
-		"prepare": "husky"
-	},
-	"devDependencies": {
-		"husky": "^9.1.7"
-	}
+  "name": "pulse-chat",
+  "private": true,
+  "version": "0.1.0",
+  "scripts": {
+    "prepare": "husky",
+    "dev": "pnpm -r --parallel --if-present dev",
+    "build": "pnpm -r --if-present build",
+    "lint": "pnpm -r --if-present lint",
+    "typecheck": "pnpm -r --if-present typecheck",
+    "test": "pnpm -r --if-present test",
+    "test:e2e": "pnpm -r --if-present test:e2e",
+    "format": "prettier --check .",
+    "format:write": "prettier --write ."
+  },
+  "lint-staged": {
+    "*.{js,cjs,mjs,ts,tsx,jsx,json,md,yml,yaml}": [
+      "prettier --write"
+    ]
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.22.0",
+    "@typescript-eslint/eslint-plugin": "^8.26.0",
+    "@typescript-eslint/parser": "^8.26.0",
+    "eslint": "^9.22.0",
+    "husky": "^9.1.7",
+    "lint-staged": "^15.5.0",
+    "prettier": "^3.5.3",
+    "typescript": "^5.8.2"
+  }
 }

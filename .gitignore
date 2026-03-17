@@ -7,10 +7,23 @@ yarn-error.log*
 pnpm-debug.log*
 lerna-debug.log*
 
-client/node_modules
-server/node_modules
+# Dependencies
+node_modules
+.pnpm-store
+
+# Build output
+.next
+.turbo
+coverage
 dist
 dist-ssr
+build
+out
+
+# Local environment files
+.env
+.env.*
+!.env.example
 *.local
 
 # Editor directories and files
@@ -23,5 +36,3 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
-server/.env
-.idea/
