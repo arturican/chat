@@ -21,13 +21,16 @@
     "@nestjs/core": "^11.1.9",
     "@nestjs/jwt": "^11.0.2",
     "@nestjs/platform-fastify": "^11.1.9",
+    "@nestjs/platform-ws": "^11.1.17",
+    "@nestjs/websockets": "^11.1.17",
     "@prisma/client": "^6.19.2",
     "@pulsechat/contracts": "workspace:*",
     "class-transformer": "^0.5.1",
     "class-validator": "^0.15.1",
     "fastify": "^5.8.2",
     "reflect-metadata": "^0.2.2",
-    "rxjs": "^7.8.2"
+    "rxjs": "^7.8.2",
+    "ws": "^8.19.0"
   },
   "devDependencies": {
     "@nestjs/cli": "^11.0.10",
@@ -35,6 +38,7 @@
     "@types/jest": "^30.0.0",
     "@types/node": "^24.6.0",
     "@types/supertest": "^7.2.0",
+    "@types/ws": "^8.18.1",
     "jest": "^30.3.0",
     "prisma": "^6.19.2",
     "supertest": "^7.2.2",

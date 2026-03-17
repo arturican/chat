@@ -1,4 +1,5 @@
 import fastifyCookie from '@fastify/cookie';
+import { WsAdapter } from '@nestjs/platform-ws';
 import { ValidationPipe } from '@nestjs/common';
 import type { ValidationError } from '@nestjs/common';
 import type { NestFastifyApplication } from '@nestjs/platform-fastify';
@@ -6,6 +7,7 @@ import type { NestFastifyApplication } from '@nestjs/platform-fastify';
 import { AppException } from './common/exceptions/app-exception';
 import { ApiExceptionFilter } from './common/filters/api-exception.filter';
 import type { AppConfig } from './config/app-config';
+import { parseRealtimeClientMessage } from './modules/realtime/realtime.protocol';
 
 function formatValidationErrors(errors: ValidationError[]): Record<string, string> {
   const details: Record<string, string> = {};
@@ -25,6 +27,11 @@ export async function configureApp(app: NestFastifyApplication, config: AppConfi
   await app.register(fastifyCookie);
 
   app.setGlobalPrefix('api');
+  app.useWebSocketAdapter(
+    new WsAdapter(app, {
+      messageParser: parseRealtimeClientMessage,
+    }),
+  );
   app.enableCors({
     origin: config.appOrigin,
     credentials: true,

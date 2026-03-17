@@ -15,7 +15,7 @@ import { APP_CONFIG } from '../../config/app-config.constants';
 import { PrismaService } from '../../prisma/prisma.service';
 import { toPublicUser } from './auth.mapper';
 import { createSessionId, hashPassword, hashToken, verifyPassword } from './auth.security';
-import type { RefreshTokenPayload, RequestContext } from './auth.types';
+import type { AccessTokenPayload, RefreshTokenPayload, RequestContext } from './auth.types';
 
 interface RegisterResult {
   response: AuthResponse;
@@ -192,6 +192,26 @@ export class AuthService {
     return {
       user: toPublicUser(user),
     };
+  }
+
+  async verifyAccessToken(accessToken: string): Promise<AccessTokenPayload> {
+    try {
+      const payload = await this.jwtService.verifyAsync<AccessTokenPayload>(accessToken, {
+        secret: this.config.jwtAccessSecret,
+      });
+
+      if (payload.tokenType !== 'access') {
+        throw new Error('Unexpected token type.');
+      }
+
+      return payload;
+    } catch {
+      throw new AppException({
+        status: 401,
+        code: 'unauthorized',
+        message: 'Access token is invalid or expired.',
+      });
+    }
   }
 
   private async issueSession(userId: string, context: RequestContext) {

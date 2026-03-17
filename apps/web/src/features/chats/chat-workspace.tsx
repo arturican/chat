@@ -1,19 +1,26 @@
 'use client';
 
-import type { PublicChat, PublicMessage } from '@pulsechat/contracts';
+import type { PublicChat, PublicMessage, PublicMessageReply } from '@pulsechat/contracts';
 import type { FormEvent } from 'react';
 import { startTransition, useEffect, useMemo, useState } from 'react';
 import { useRouter } from 'next/navigation';
 
 import { getApiErrorMessage } from '../../shared/api/api-client';
 import { createDirectChat, createGroupChat, getChat, getChats } from '../../shared/api/chat-api';
-import { createChatMessage, getChatMessages } from '../../shared/api/message-api';
+import { getChatMessages } from '../../shared/api/message-api';
 import { useAuthSession } from '../auth/auth-session-provider';
+import { useChatRealtime } from './use-chat-realtime';
 
 type ComposerMode = 'direct' | 'group';
+type DeliveryState = 'pending' | null;
 
 interface ChatWorkspaceProps {
   activeChatId?: string;
+}
+
+interface ChatMessageItem extends PublicMessage {
+  clientId: string | null;
+  deliveryState: DeliveryState;
 }
 
 const messageTimeFormatter = new Intl.DateTimeFormat('en', {
@@ -58,9 +65,9 @@ function normalizeCommaSeparatedUsernames(value: string): string[] {
 }
 
 function prependMissingMessages(
-  currentMessages: PublicMessage[],
-  incomingMessages: PublicMessage[],
-): PublicMessage[] {
+  currentMessages: ChatMessageItem[],
+  incomingMessages: ChatMessageItem[],
+): ChatMessageItem[] {
   const existingMessageIds = new Set(currentMessages.map((message) => message.id));
 
   return [
@@ -77,6 +84,22 @@ function trimReplyPreview(body: string): string {
   return body.length > 120 ? `${body.slice(0, 117)}...` : body;
 }
 
+function toChatMessageItem(message: PublicMessage): ChatMessageItem {
+  return {
+    ...message,
+    clientId: null,
+    deliveryState: null,
+  };
+}
+
+function createReplyPreview(message: ChatMessageItem): PublicMessageReply {
+  return {
+    id: message.id,
+    body: message.body,
+    author: message.author,
+  };
+}
+
 export function ChatWorkspace({ activeChatId }: ChatWorkspaceProps) {
   const router = useRouter();
   const session = useAuthSession();
@@ -91,16 +114,61 @@ export function ChatWorkspace({ activeChatId }: ChatWorkspaceProps) {
   const [directUsername, setDirectUsername] = useState('');
   const [groupTitle, setGroupTitle] = useState('');
   const [groupMembers, setGroupMembers] = useState('');
-  const [messages, setMessages] = useState<PublicMessage[]>([]);
+  const [messages, setMessages] = useState<ChatMessageItem[]>([]);
   const [nextMessagesCursor, setNextMessagesCursor] = useState<string | null>(null);
   const [isLoadingMessages, setIsLoadingMessages] = useState(false);
   const [isLoadingOlderMessages, setIsLoadingOlderMessages] = useState(false);
   const [messagesError, setMessagesError] = useState<string | null>(null);
   const [sendError, setSendError] = useState<string | null>(null);
-  const [isSendingMessage, setIsSendingMessage] = useState(false);
   const [messageBody, setMessageBody] = useState('');
-  const [replyTarget, setReplyTarget] = useState<PublicMessage | null>(null);
+  const [replyTarget, setReplyTarget] = useState<ChatMessageItem | null>(null);
   const [messagesReloadToken, setMessagesReloadToken] = useState(0);
+  const realtime = useChatRealtime({
+    accessToken: session.accessToken,
+    onMessageCreated: (payload) => {
+      setChats((currentChats) => {
+        const activeChat = currentChats.find((chat) => chat.id === payload.chatId);
+
+        if (!activeChat) {
+          return currentChats;
+        }
+
+        return [
+          {
+            ...activeChat,
+            updatedAt: payload.message.createdAt,
+          },
+          ...currentChats.filter((chat) => chat.id !== payload.chatId),
+        ];
+      });
+      setSelectedChat((currentChat) =>
+        currentChat && currentChat.id === payload.chatId
+          ? {
+              ...currentChat,
+              updatedAt: payload.message.createdAt,
+            }
+          : currentChat,
+      );
+
+      if (payload.chatId !== activeChatId) {
+        return;
+      }
+
+      setMessages((currentMessages) => {
+        const nextMessage = toChatMessageItem(payload.message);
+        const messagesWithoutOptimisticCopy =
+          payload.clientId !== null
+            ? currentMessages.filter((message) => message.clientId !== payload.clientId)
+            : currentMessages;
+
+        if (messagesWithoutOptimisticCopy.some((message) => message.id === nextMessage.id)) {
+          return messagesWithoutOptimisticCopy;
+        }
+
+        return [...messagesWithoutOptimisticCopy, nextMessage];
+      });
+    },
+  });
 
   useEffect(() => {
     async function loadChats() {
@@ -202,7 +270,7 @@ export function ChatWorkspace({ activeChatId }: ChatWorkspaceProps) {
           return;
         }
 
-        setMessages(response.data);
+        setMessages(response.data.map((message) => toChatMessageItem(message)));
         setNextMessagesCursor(response.meta.nextCursor);
       } catch (error) {
         if (isCancelled) {
@@ -225,6 +293,12 @@ export function ChatWorkspace({ activeChatId }: ChatWorkspaceProps) {
       isCancelled = true;
     };
   }, [activeChatId, messagesReloadToken, session.accessToken]);
+
+  useEffect(() => {
+    if (realtime.errorMessage) {
+      setSendError(realtime.errorMessage);
+    }
+  }, [realtime.errorMessage]);
 
   const chatList = useMemo(
     () =>
@@ -250,7 +324,12 @@ export function ChatWorkspace({ activeChatId }: ChatWorkspaceProps) {
         limit: 20,
       });
 
-      setMessages((currentMessages) => prependMissingMessages(currentMessages, response.data));
+      setMessages((currentMessages) =>
+        prependMissingMessages(
+          currentMessages,
+          response.data.map((message) => toChatMessageItem(message)),
+        ),
+      );
       setNextMessagesCursor(response.meta.nextCursor);
     } catch (error) {
       setMessagesError(getApiErrorMessage(error));
@@ -333,50 +412,64 @@ export function ChatWorkspace({ activeChatId }: ChatWorkspaceProps) {
   async function handleSendMessage(event: FormEvent) {
     event.preventDefault();
 
-    if (!session.accessToken || !activeChatId) {
+    if (!activeChatId || !session.user) {
       return;
     }
 
-    setIsSendingMessage(true);
-    setSendError(null);
+    const trimmedBody = messageBody.trim();
 
-    try {
-      const message = await createChatMessage(session.accessToken, activeChatId, {
-        body: messageBody.trim(),
-        replyToMessageId: replyTarget?.id ?? null,
-      });
-
-      setMessages((currentMessages) => [...currentMessages, message]);
-      setMessageBody('');
-      setReplyTarget(null);
-      setSelectedChat((currentChat) =>
-        currentChat
-          ? {
-              ...currentChat,
-              updatedAt: message.createdAt,
-            }
-          : currentChat,
-      );
-      setChats((currentChats) => {
-        const activeChat = currentChats.find((chat) => chat.id === activeChatId);
-
-        if (!activeChat) {
-          return currentChats;
-        }
-
-        return [
-          {
-            ...activeChat,
-            updatedAt: message.createdAt,
-          },
-          ...currentChats.filter((chat) => chat.id !== activeChatId),
-        ];
-      });
-    } catch (error) {
-      setSendError(getApiErrorMessage(error));
-    } finally {
-      setIsSendingMessage(false);
+    if (trimmedBody.length === 0) {
+      return;
     }
+
+    const clientId = globalThis.crypto.randomUUID();
+    const createdAt = new Date().toISOString();
+    const optimisticMessage: ChatMessageItem = {
+      id: `optimistic-${clientId}`,
+      chatId: activeChatId,
+      body: trimmedBody,
+      author: session.user,
+      replyTo: replyTarget ? createReplyPreview(replyTarget) : null,
+      createdAt,
+      updatedAt: createdAt,
+      clientId,
+      deliveryState: 'pending',
+    };
+
+    setSendError(null);
+    setMessages((currentMessages) => [...currentMessages, optimisticMessage]);
+    setMessageBody('');
+    setReplyTarget(null);
+    setChats((currentChats) => {
+      const activeChat = currentChats.find((chat) => chat.id === activeChatId);
+
+      if (!activeChat) {
+        return currentChats;
+      }
+
+      return [
+        {
+          ...activeChat,
+          updatedAt: createdAt,
+        },
+        ...currentChats.filter((chat) => chat.id !== activeChatId),
+      ];
+    });
+    setSelectedChat((currentChat) =>
+      currentChat
+        ? {
+            ...currentChat,
+            updatedAt: createdAt,
+          }
+        : currentChat,
+    );
+
+    realtime.sendMessage({
+      chatId: activeChatId,
+      clientId,
+      body: trimmedBody,
+      replyToMessageId: replyTarget?.id ?? null,
+    });
   }
 
   return (
@@ -538,18 +631,33 @@ export function ChatWorkspace({ activeChatId }: ChatWorkspaceProps) {
                 <div className="chat-history-head">
                   <div>
                     <h3>Conversation</h3>
-                    <p>Catch up on recent messages and send the next one when you are ready.</p>
+                    <p>Catch up on recent messages and keep the thread moving in real time.</p>
                   </div>
-                  {nextMessagesCursor ? (
-                    <button
-                      className="ghost-button"
-                      disabled={isLoadingOlderMessages}
-                      type="button"
-                      onClick={() => void handleLoadOlderMessages()}
+                  <div className="chat-history-actions">
+                    <span
+                      className={
+                        realtime.status === 'connected'
+                          ? 'chat-live-status chat-live-status-active'
+                          : 'chat-live-status'
+                      }
                     >
-                      {isLoadingOlderMessages ? 'Loading...' : 'Load older'}
-                    </button>
-                  ) : null}
+                      {realtime.status === 'connected'
+                        ? 'Live'
+                        : realtime.status === 'reconnecting'
+                          ? 'Reconnecting'
+                          : 'Connecting'}
+                    </span>
+                    {nextMessagesCursor ? (
+                      <button
+                        className="ghost-button"
+                        disabled={isLoadingOlderMessages}
+                        type="button"
+                        onClick={() => void handleLoadOlderMessages()}
+                      >
+                        {isLoadingOlderMessages ? 'Loading...' : 'Load older'}
+                      </button>
+                    ) : null}
+                  </div>
                 </div>
 
                 {isLoadingMessages ? (
@@ -598,7 +706,12 @@ export function ChatWorkspace({ activeChatId }: ChatWorkspaceProps) {
                         >
                           <div className="chat-message-meta">
                             <strong>{message.author.displayName || message.author.username}</strong>
-                            <span>{formatMessageTime(message.createdAt)}</span>
+                            <div className="chat-message-meta-side">
+                              {message.deliveryState === 'pending' ? (
+                                <span className="chat-message-status">Sending...</span>
+                              ) : null}
+                              <span>{formatMessageTime(message.createdAt)}</span>
+                            </div>
                           </div>
 
                           {message.replyTo ? (
@@ -668,7 +781,7 @@ export function ChatWorkspace({ activeChatId }: ChatWorkspaceProps) {
                     </p>
                   ) : (
                     <p className="feedback feedback-neutral">
-                      Keep it short and clear, or use reply to answer a specific message.
+                      New messages appear live here, and queued ones resume sending after reconnect.
                     </p>
                   )}
 
@@ -677,15 +790,17 @@ export function ChatWorkspace({ activeChatId }: ChatWorkspaceProps) {
                       <p className="chat-detail-loading">Refreshing conversation details...</p>
                     ) : (
                       <span className="chat-detail-loading">
-                        Messages stay inside the current conversation.
+                        {realtime.status === 'connected'
+                          ? 'Realtime delivery is active for this conversation.'
+                          : 'Messages will keep trying while the connection comes back.'}
                       </span>
                     )}
                     <button
                       className="primary-button"
-                      disabled={isSendingMessage || messageBody.trim().length === 0}
+                      disabled={messageBody.trim().length === 0}
                       type="submit"
                     >
-                      {isSendingMessage ? 'Sending...' : 'Send message'}
+                      Send message
                     </button>
                   </div>
                 </form>

@@ -1,18 +1,13 @@
 import { Inject, Injectable, type CanActivate, type ExecutionContext } from '@nestjs/common';
-import { JwtService } from '@nestjs/jwt';
 import type { FastifyRequest } from 'fastify';
 
 import { AppException } from '../../common/exceptions/app-exception';
-import type { AppConfig } from '../../config/app-config';
-import { APP_CONFIG } from '../../config/app-config.constants';
-import type { AccessTokenPayload, AuthenticatedRequest } from './auth.types';
+import { AuthService } from './auth.service';
+import type { AuthenticatedRequest } from './auth.types';
 
 @Injectable()
 export class AccessTokenGuard implements CanActivate {
-  constructor(
-    @Inject(JwtService) private readonly jwtService: JwtService,
-    @Inject(APP_CONFIG) private readonly config: AppConfig,
-  ) {}
+  constructor(@Inject(AuthService) private readonly authService: AuthService) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const request = context
@@ -29,25 +24,10 @@ export class AccessTokenGuard implements CanActivate {
     }
 
     const token = authorizationHeader.slice('Bearer '.length);
+    const payload = await this.authService.verifyAccessToken(token);
 
-    try {
-      const payload = await this.jwtService.verifyAsync<AccessTokenPayload>(token, {
-        secret: this.config.jwtAccessSecret,
-      });
+    request.authUser = payload;
 
-      if (payload.tokenType !== 'access') {
-        throw new Error('Unexpected token type.');
-      }
-
-      request.authUser = payload;
-
-      return true;
-    } catch {
-      throw new AppException({
-        status: 401,
-        code: 'unauthorized',
-        message: 'Access token is invalid or expired.',
-      });
-    }
+    return true;
   }
 }

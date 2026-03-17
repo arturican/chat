@@ -1,4 +1,4 @@
-import type { EntityId, IsoDateString, Nullable } from './shared';
+import type { EntityId, IsoDateString, Nullable, PublicMessage } from './shared';
 
 export const clientEventNames = [
   'auth.identify',
@@ -38,9 +38,8 @@ export interface PresenceSubscribePayload {
 export interface MessageSendPayload {
   chatId: EntityId;
   clientId: string;
-  text: string;
+  body: string;
   replyToMessageId: Nullable<EntityId>;
-  attachmentIds: EntityId[];
 }
 
 export interface MessageEditPayload {
@@ -82,8 +81,8 @@ export interface PresenceUpdatedPayload {
 
 export interface MessageCreatedPayload {
   chatId: EntityId;
-  messageId: EntityId;
-  clientId: string;
+  clientId: Nullable<string>;
+  message: PublicMessage;
 }
 
 export interface MessageUpdatedPayload {
