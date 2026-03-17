@@ -1,17 +1,8 @@
 # Architecture — PulseChat
 
-## 1. High-level overview
+## Current Architecture Snapshot
 
-Система состоит из:
-
-- `apps/web` — Next.js frontend;
-- `apps/api` — NestJS/Fastify backend;
-- PostgreSQL;
-- S3-compatible storage;
-- WebSocket layer;
-- shared contracts package.
-
-## 2. Repository structure
+The repository already implements the bootstrap architecture below:
 
 ```txt
 /
@@ -20,119 +11,75 @@
     api/
   packages/
     contracts/
-    config/
-    ui/
-  docs/
-  tasks/
   docker/
+    minio/
 ```
 
-## 3. Frontend responsibilities
+## Current Runtime Pieces
 
-Frontend отвечает за:
+### apps/web
 
-- auth UI;
-- layout и navigation;
-- chat list;
-- conversation view;
-- message composer;
-- optimistic updates;
-- ws connection lifecycle;
-- uploads flow;
-- search UI;
-- settings UI.
+- Next.js App Router
+- one bootstrap landing page
+- public env loader for API base URL
+- global visual shell styles
 
-## 4. Backend responsibilities
+### apps/api
 
-Backend отвечает за:
+- NestJS + Fastify application
+- root app module
+- validated env loading
+- `GET /api/health`
+- global `/api` prefix
+- CORS configured from env
 
-- auth;
-- session management;
-- chat access control;
-- message persistence;
-- history API;
-- realtime event fanout;
-- read/typing/presence;
-- upload signing;
-- search API.
+### packages/contracts
 
-## 5. Data flow
+- shared scalar and entity types
+- shared HTTP DTO types for current bootstrap and upcoming auth
+- shared WebSocket event names and payload maps for future realtime work
 
-### Отправка текста
+### Docker services
 
-1. Клиент отправляет `message.send` через WebSocket.
-2. Сервер проверяет пользователя и членство в чате.
-3. Сервер создает сообщение в PostgreSQL.
-4. Сервер публикует `message.created`.
-5. Клиенты обновляют UI.
+- PostgreSQL 16
+- MinIO
+- one-shot MinIO bucket initializer
 
-### Загрузка файла
+## Current Design Decisions
 
-1. Клиент вызывает HTTP endpoint на presign.
-2. Сервер проверяет mime/size и возвращает upload URL.
-3. Клиент загружает файл напрямую в S3.
-4. Клиент подтверждает завершение upload.
-5. Сервер создает attachment metadata.
-6. Клиент создает сообщение с attachment.
+### Monorepo first
 
-## 6. Design decisions
+The repository is structured for long-term feature work before feature modules exist.
 
-### 6.1 HTTP + WebSocket split
+### Contracts before implementation growth
 
-HTTP:
+`packages/contracts` already exists so future auth, chat, and realtime code share the same public types instead of duplicating DTO definitions.
 
-- auth;
-- initial data;
-- history;
-- search;
-- upload flow.
+### HTTP and WebSocket split remains fixed
 
-WebSocket:
+Even though realtime is not implemented yet, the protocol boundary is already locked:
 
-- send/edit/delete message;
-- read events;
-- typing;
-- presence;
-- delivery of live updates.
+- HTTP for auth, CRUD, history, search, upload lifecycle
+- WebSocket for live events only
 
-### 6.2 Database is source of truth
+### Bootstrap kept intentionally thin
 
-Никакое сообщение не считается доставленным, пока оно не записано в PostgreSQL.
+The current code does not pretend auth, Prisma, or WebSocket features already exist. The codebase contains only the minimum working skeleton needed to begin Phase 1 cleanly.
 
-### 6.3 Cursor pagination
+## Target Architecture Direction
 
-История сообщений загружается по cursor pagination, а не по offset.
+The target architecture remains:
 
-### 6.4 Shared contracts
+- `apps/web` grows into auth shell, chat shell, message UI, upload UI
+- `apps/api` grows into modular NestJS modules
+- `packages/contracts` remains the public contract surface for HTTP and WS payloads
+- PostgreSQL remains source of truth
+- MinIO remains local object storage for upload flow
 
-Все DTO, enums, event names и public payload types лежат в `packages/contracts`.
+## Immediate Next Architectural Step
 
-## 7. Security basics
+The next real architectural addition should be:
 
-- password hashing;
-- short-lived access tokens;
-- refresh tokens в httpOnly cookie;
-- ws auth handshake;
-- rate limiting на auth и message operations;
-- file type/size validation;
-- authorization checks для каждого chat action.
-
-## 8. Future scalability
-
-На старте это монолит в пределах backend-приложения.
-Позже можно выделить:
-
-- dedicated realtime service;
-- background workers;
-- media processing pipeline;
-- notification service.
-
-## 9. Logging / observability
-
-Нужно заложить:
-
-- request logging;
-- ws connection logging;
-- structured logs;
-- error boundary;
-- health endpoint.
+1. Prisma schema and client wiring
+2. auth module boundaries in `apps/api`
+3. auth route groups and app shell split in `apps/web`

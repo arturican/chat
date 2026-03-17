@@ -1,21 +1,33 @@
 # Task 005 — Realtime Messaging
 
+## Статус
+
+Ожидает завершения messages history.
+
 ## Цель
 
-Сделать live messaging.
+Добавить live messaging поверх уже существующей message history.
 
-## Нужно сделать
+## Зависимости
 
-- ws adapter
-- ws gateway
-- auth identify
-- message.send
-- message.created
-- optimistic UI
-- reconnect handling
-- clientId idempotency
+Нужно завершить:
 
-## Acceptance criteria
+- auth
+- chats
+- messages history
+
+## Что нужно сделать
+
+- подключить Nest `WsAdapter`
+- реализовать ws gateway
+- реализовать `auth.identify`
+- реализовать `message.send`
+- реализовать `message.created`
+- добавить optimistic UI
+- добавить reconnect handling
+- добавить `clientId` idempotency
+
+## Acceptance Criteria
 
 - два клиента обмениваются сообщениями
 - дубликаты не появляются

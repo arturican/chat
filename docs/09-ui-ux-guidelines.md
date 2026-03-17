@@ -1,72 +1,57 @@
 # UI / UX Guidelines — PulseChat
 
-## 1. Design goals
+## Current UI State
 
-Интерфейс должен выглядеть:
+The repository currently contains only a bootstrap shell UI in `apps/web/app/page.tsx`.
 
-- чисто;
-- современно;
-- спокойно;
-- не перегруженно;
-- убедительно как реальный продукт.
+The current shell already establishes:
 
-## 2. Layout principles
+- dark atmospheric background
+- glass-like panels
+- clear bootstrap status messaging
+- responsive single-column fallback on smaller screens
 
-- sidebar + conversation layout на desktop;
-- focus on content;
-- компактная, но не тесная вертикальная ритмика;
-- sticky chat header;
-- sticky composer.
+## What The Current UI Is For
 
-## 3. Visual system
+The existing page is not the final messenger UI.
 
-- скругления умеренные;
-- тени мягкие;
-- хороший контраст;
-- понятная иерархия;
-- аккуратные hover/focus states;
-- не использовать слишком яркую палитру везде сразу.
+Its job is to:
 
-## 4. Messaging UX
+- confirm the frontend starts correctly
+- expose the current API base URL
+- provide a stable visual base for future auth and chat routes
 
-- новые сообщения появляются без дерганий;
-- scroll behavior предсказуем;
-- unread separator заметен;
-- reply preview компактный;
-- deleted message отличается визуально;
-- edited state виден, но не шумный.
+## Design Direction For The Real App
 
-## 5. Sidebar UX
+Future UI should feel:
 
-- chat item показывает:
-  - title
-  - last message preview
-  - time
-  - unread badge
-  - active state
+- modern
+- calm
+- dense but readable
+- responsive without feeling mobile-only
+- like a real communication product rather than a component demo
 
-## 6. Mobile UX
+## Messaging UX Goals
 
-- большие hit areas;
-- back button в chat header;
-- safe bottom spacing;
-- composer не перекрывает контент;
-- плавный переход между списком чатов и разговором.
+Once message UI exists, keep these targets:
 
-## 7. Empty states
+- stable scrolling
+- visible unread separators
+- compact reply preview
+- subtle edited / deleted states
+- clear active chat state
+- loading / error / empty states on every important screen
 
-Нужны:
+## Auth UI Direction
 
-- нет чатов;
-- чат пустой;
-- поиск ничего не нашел;
-- upload failed;
-- reconnecting websocket.
+The next frontend phase should add:
 
-## 8. Error UX
+- login page
+- register page
+- protected app shell
+- useful loading and error states
 
-Ошибки должны:
+## Guardrail
 
-- быть понятными;
-- не ломать layout;
-- давать retry, где это уместно.
+Do not document UI that does not exist yet as if it is already implemented.
+Describe the current shell as current state and chat UX rules as planned direction.

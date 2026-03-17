@@ -1,17 +1,31 @@
 # PulseChat
 
-PulseChat is a production-minded realtime web messenger built as a pnpm workspace monorepo.
+PulseChat is a production-minded realtime messenger being built as a TypeScript monorepo.
 
-## Current Status
+## Current Repository State
 
-- Phase 0 (bootstrap) is completed.
-- The next implementation phase is Phase 1 (auth).
-- The repository already contains:
-  - `apps/web` on Next.js App Router
-  - `apps/api` on NestJS + Fastify
-  - `packages/contracts` for shared DTO and ws protocol types
-  - `docker-compose.yml` for PostgreSQL and MinIO
-  - shared TypeScript, ESLint, and Prettier setup
+The repository is no longer an empty starter pack.
+
+Implemented now:
+
+- pnpm workspace monorepo
+- `apps/web` with Next.js App Router bootstrap
+- `apps/api` with NestJS + Fastify bootstrap
+- `packages/contracts` with shared HTTP and WebSocket contract types
+- Docker Compose for PostgreSQL and MinIO
+- shared TypeScript, ESLint, Prettier, Husky, and lint-staged setup
+- root `pnpm dev`, `build`, `lint`, `typecheck`, `test`, `test:e2e` scripts
+- `GET /api/health`
+
+Not implemented yet:
+
+- Prisma schema and database client
+- auth flow
+- chats
+- messages history
+- realtime gateway
+- uploads flow
+- search
 
 ## Repository Structure
 
@@ -31,10 +45,12 @@ PulseChat is a production-minded realtime web messenger built as a pnpm workspac
 ├─ docker-compose.yml
 ├─ package.json
 ├─ pnpm-workspace.yaml
+├─ prettier.config.mjs
+├─ eslint.config.mjs
 └─ tsconfig.base.json
 ```
 
-## Local Commands
+## Local Setup
 
 Install dependencies:
 
@@ -48,7 +64,7 @@ Start local infrastructure:
 docker compose up -d
 ```
 
-Run web and api together:
+Run both apps together:
 
 ```bash
 set -a
@@ -57,6 +73,8 @@ set -a
 set +a
 pnpm dev
 ```
+
+## Verification Commands
 
 Project-wide checks:
 
@@ -68,38 +86,34 @@ pnpm test
 pnpm test:e2e
 ```
 
-## Bootstrap Verification
+Manual checks:
 
-When Phase 0 is healthy:
+```bash
+curl http://127.0.0.1:4000/api/health
+open http://127.0.0.1:3000
+```
 
-- `pnpm build` passes
-- `pnpm lint` passes
-- `pnpm typecheck` passes
-- `docker compose up -d` starts PostgreSQL and MinIO
-- `GET http://127.0.0.1:4000/api/health` returns `200`
-- `http://127.0.0.1:3000` serves the web shell
+Expected bootstrap result:
 
-## Working Rules
+- web shell is available on `http://127.0.0.1:3000`
+- api health endpoint responds on `http://127.0.0.1:4000/api/health`
+- PostgreSQL is exposed on `localhost:5432`
+- MinIO is exposed on `localhost:9000` and `localhost:9001`
 
-- Read `AGENTS.md` before making architectural changes.
-- Use `docs/08-implementation-plan.md` as the phase roadmap.
-- Use `tasks/` as the execution checklist for the current phase.
-- Make one logical step at a time.
-- Create one git commit per finished step.
-- Push only on explicit request.
+## Current Development Policy
 
-## Codex And GitHub
+- Follow `AGENTS.md` first.
+- Follow `docs/08-implementation-plan.md` for phase order.
+- Work in small finished steps.
+- Make one git commit per completed step.
+- Push only when the user explicitly asks.
 
-This repository already has a Git remote configured for GitHub and is ready for normal `git push` / `git pull` workflows from the local Codex app.
+## Current Next Phase
 
-Codex web / ChatGPT GitHub access is a separate OpenAI product integration. According to OpenAI Help Center guidance, GitHub is connected through ChatGPT settings:
+The next implementation target is **Phase 1 — auth**.
 
-1. Open ChatGPT.
-2. Go to `Settings -> Apps`.
-3. Choose GitHub.
-4. Authorize the ChatGPT app in GitHub and select the repositories it may access.
+Recommended first auth sub-step:
 
-Sources:
-
-- [Using Codex with your ChatGPT plan](https://help.openai.com/en/articles/11369540/)
-- [Connecting GitHub to ChatGPT](https://help.openai.com/en/articles/11145903-connecting-github-to-chatgpt)
+1. Add Prisma schema for `users`, `profiles`, and `sessions`.
+2. Wire Prisma into `apps/api`.
+3. Only then build register/login/refresh/logout.

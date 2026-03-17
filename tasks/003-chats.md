@@ -1,20 +1,32 @@
 # Task 003 — Chats
 
+## Статус
+
+Ожидает завершения auth.
+
 ## Цель
 
-Сделать список чатов и создание direct/group chat.
+Добавить список чатов и создание direct/group chat поверх уже работающей auth-базы.
 
-## Нужно сделать
+## Зависимости
 
-- chats / chat_members schema
-- create direct chat
-- create group chat
-- chats list endpoint
-- chat details endpoint
-- sidebar UI
-- basic chat route
+Нужно завершить:
 
-## Acceptance criteria
+- Prisma auth schema
+- действующую аутентификацию
+- current user flow
+
+## Что нужно сделать
+
+- добавить `chats` / `chat_members` schema
+- создать direct chat flow
+- создать group chat flow
+- реализовать chats list endpoint
+- реализовать chat details endpoint
+- добавить sidebar UI
+- добавить базовый chat route
+
+## Acceptance Criteria
 
 - можно создать direct chat
 - можно создать group chat

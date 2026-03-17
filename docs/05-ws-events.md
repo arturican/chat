@@ -1,163 +1,74 @@
 # WebSocket Events — PulseChat
 
-## 1. Connection
+## Current State
 
-WebSocket используется для live-событий.
-После подключения клиент проходит auth handshake.
+There is **no WebSocket server implementation yet** in `apps/api`.
 
-## 2. Event envelope
+However, the project already contains a typed future protocol in `packages/contracts/src/ws.ts`.
 
-### Client -> Server
+That means the repository already knows the intended event names and payload shapes, even though no gateway exists yet.
 
-```ts
-type ClientEvent<T = unknown> = {
-  event: string;
-  requestId?: string;
-  payload: T;
-};
-```
+## Reserved Client Events
 
-### Server -> Client
+Currently defined in contracts:
 
-```ts
-type ServerEvent<T = unknown> = {
-  event: string;
-  payload: T;
-  ts: string;
-};
-```
+- `auth.identify`
+- `presence.subscribe`
+- `message.send`
+- `message.edit`
+- `message.delete`
+- `message.read`
+- `chat.typing.start`
+- `chat.typing.stop`
 
-## 3. Client events
+## Reserved Server Events
 
-### auth.identify
+Currently defined in contracts:
 
-Payload:
+- `auth.ack`
+- `auth.error`
+- `presence.sync`
+- `presence.updated`
+- `message.created`
+- `message.updated`
+- `message.deleted`
+- `message.read.updated`
+- `chat.typing.updated`
+- `error`
 
-```json
-{
-  "accessToken": "jwt"
-}
-```
+## What Is Implemented Now
 
-### presence.subscribe
+Implemented now:
 
-```json
-{
-  "chatIds": ["uuid"]
-}
-```
+- typed event names
+- typed payload maps
+- generic `ClientEvent` and `ServerEvent` wrappers
+- union types `AnyClientEvent` and `AnyServerEvent`
 
-### message.send
+Not implemented yet:
 
-```json
-{
-  "chatId": "uuid",
-  "clientId": "local-generated-id",
-  "text": "hello",
-  "replyToMessageId": null,
-  "attachmentIds": []
-}
-```
+- Nest `WsAdapter`
+- websocket gateway
+- auth handshake handling
+- subscriptions
+- fanout
+- reconnect handling
+- optimistic reconciliation
 
-### message.edit
+## Next WebSocket Step
 
-```json
-{
-  "messageId": "uuid",
-  "text": "updated text"
-}
-```
+Do not implement realtime before auth and message history.
 
-### message.delete
+The correct order remains:
 
-```json
-{
-  "messageId": "uuid"
-}
-```
+1. auth
+2. chats
+3. messages history
+4. websocket gateway
 
-### message.read
+## Reliability Rule
 
-```json
-{
-  "chatId": "uuid",
-  "messageId": "uuid"
-}
-```
+When realtime is implemented later, keep this invariant:
 
-### chat.typing.start
-
-```json
-{
-  "chatId": "uuid"
-}
-```
-
-### chat.typing.stop
-
-```json
-{
-  "chatId": "uuid"
-}
-```
-
-## 4. Server events
-
-### auth.ack
-
-### auth.error
-
-### presence.sync
-
-Снимок текущих online users.
-
-### presence.updated
-
-Изменение online/offline пользователя.
-
-### message.created
-
-Создано новое сообщение.
-
-### message.updated
-
-Сообщение отредактировано.
-
-### message.deleted
-
-Сообщение удалено.
-
-### message.read.updated
-
-Изменился read state.
-
-### chat.typing.updated
-
-Список пользователей, которые печатают.
-
-### error
-
-Единый формат ошибки.
-
-## 5. Reliable delivery notes
-
-- `clientId` обязателен для идемпотентности.
-- optimistic message на клиенте должен матчиться по `clientId`.
-- при reconnect клиент запрашивает актуальную историю через HTTP.
-
-## 6. Reconnect strategy
-
-Клиент должен:
-
-- автоматически переподключаться;
-- повторно аутентифицироваться;
-- переподписываться на активные чаты;
-- не дублировать optimistic messages.
-
-## 7. Authorization
-
-Каждый ws action должен проверять:
-
-- аутентификацию;
-- доступ к чату;
-- права на изменение сообщения.
+- a message must be persisted in PostgreSQL first
+- only after that may `message.created` be broadcast

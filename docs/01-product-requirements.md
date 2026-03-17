@@ -1,130 +1,92 @@
 # Product Requirements — PulseChat
 
-## 1. Описание продукта
+## Product Goal
 
-PulseChat — это веб-мессенджер в стиле современных chat apps с акцентом на:
+PulseChat is a portfolio-grade realtime web messenger with a modern, production-minded architecture.
 
-- быстрый real-time обмен сообщениями;
-- хороший UX на desktop и mobile;
-- личные и групповые чаты;
-- вложения;
-- поиск;
-- статусы доставки и прочтения;
-- presence и typing indicators.
+The project should demonstrate:
 
-## 2. Цель проекта
+- strong frontend structure
+- typed backend contracts
+- realtime architecture with clear HTTP / WebSocket split
+- local developer experience through Docker and pnpm workspaces
+- good UX on desktop and mobile
 
-Показать сильный frontend + fullstack кейс для портфолио:
+## Current Product Slice
 
-- сложный UI;
-- real-time;
-- файловые вложения;
-- продуманная архитектура;
-- production-minded подход.
+Already implemented in code:
 
-## 3. Целевая аудитория
+- monorepo bootstrap
+- health-checked backend shell
+- frontend shell page
+- shared contracts package
+- local PostgreSQL + MinIO infrastructure
 
-- пользователи, которым нужен удобный веб-чат;
-- работодатель / техлид, который оценивает уровень разработки проекта;
-- портфолио-аудитория.
+Not implemented yet:
 
-## 4. Продуктовые принципы
+- real users
+- sessions
+- chats
+- messages
+- uploads
+- realtime delivery
+- search
 
-- UI должен быть быстрым и отзывчивым.
-- На мобильных устройствах должен быть нативоподобный опыт.
-- Realtime должен ощущаться надежным.
-- Ошибки должны быть понятными.
-- Основной сценарий общения должен работать идеально.
+## MVP Target Scope
 
-## 5. MVP scope
+The intended MVP still includes:
 
-### Обязательно
+- registration
+- login / logout
+- refresh token flow
+- current profile
+- direct and group chats
+- message history with cursor pagination
+- message send / edit / soft delete
+- read state
+- typing indicators
+- presence
+- file uploads through presigned flow
+- message search
+- responsive UI
 
-- регистрация;
-- вход / выход;
-- refresh token flow;
-- профиль текущего пользователя;
-- список чатов;
-- личные чаты;
-- групповые чаты;
-- создание нового чата;
-- отправка текстового сообщения;
-- reply на сообщение;
-- редактирование сообщения;
-- soft delete сообщения;
-- read status;
-- typing indicator;
-- online / offline presence;
-- история сообщений с cursor pagination;
-- загрузка изображений и файлов;
-- поиск по сообщениям;
-- темная тема;
-- адаптивный интерфейс.
+## MVP Exclusions
 
-### Не входит в MVP
+Still out of scope:
 
-- аудио/видео звонки;
-- E2E encryption;
-- каналы;
-- stories;
-- push notifications;
-- voice messages;
-- advanced moderation;
-- multi-device sync conflict resolution сложного уровня.
+- audio and video calls
+- end-to-end encryption
+- channels
+- stories
+- push notifications
+- advanced multi-device conflict resolution
 
-## 6. Основные пользовательские сценарии
+## Current Phase Boundary
 
-### Сценарий 1 — вход и просмотр списка чатов
+The repository is currently between:
 
-1. Пользователь открывает приложение.
-2. Логинится.
-3. Видит список своих чатов.
-4. Может выбрать чат и прочитать историю.
+- completed: Phase 0 — bootstrap
+- next: Phase 1 — auth
 
-### Сценарий 2 — отправка сообщения
+This means product work should now move from infrastructure to user identity and session management.
 
-1. Пользователь открывает чат.
-2. Пишет текст.
-3. Видит optimistic message.
-4. После подтверждения сервером сообщение становится “sent/delivered”.
+## Success Criteria For The Current Stage
 
-### Сценарий 3 — чтение сообщений
+The current repository state is considered healthy if:
 
-1. Пользователь открывает чат.
-2. Непрочитанные сообщения помечаются прочитанными.
-3. Статус read обновляется у участников.
+- `pnpm build` passes
+- `pnpm lint` passes
+- `pnpm typecheck` passes
+- `pnpm dev` starts web and api
+- `docker compose up -d` starts PostgreSQL and MinIO
+- `/api/health` returns `200`
 
-### Сценарий 4 — загрузка файла
+## Success Criteria For MVP
 
-1. Пользователь выбирает файл.
-2. Клиент получает presigned URL.
-3. Загружает файл в S3-compatible storage.
-4. После завершения создает attachment-сообщение.
+The MVP will be considered successful when:
 
-### Сценарий 5 — поиск
-
-1. Пользователь вводит текст.
-2. Видит результаты по сообщениям.
-3. Может перейти в нужный чат и к нужному сообщению.
-
-## 7. Нефункциональные требования
-
-- строгая типизация;
-- предсказуемый API;
-- базовая безопасность;
-- rate limit на auth и message send;
-- валидированные env;
-- доступность базового уровня;
-- удобная локальная сборка через Docker Compose.
-
-## 8. Success criteria
-
-MVP считается успешным, если:
-
-- приложение можно поднять локально одной инструкцией;
-- auth работает стабильно;
-- личные и групповые чаты работают;
-- сообщения приходят в реальном времени;
-- вложения загружаются;
-- UI хорошо работает на 375px, 768px, 1280px+;
-- у проекта есть чистая структура и понятный onboarding.
+- a user can register and log in
+- a user can open a chat and load history
+- two clients can exchange messages in realtime
+- uploads work through MinIO-compatible storage
+- the project has a clean onboarding and local setup flow

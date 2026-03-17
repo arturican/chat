@@ -1,64 +1,76 @@
 # Testing & Quality — PulseChat
 
-## 1. Types of tests
+## Current Quality Baseline
 
-### Unit
+What is already verified in the repository:
 
-- services
-- utils
-- validators
-- message mapping logic
+- root `pnpm build` passes
+- root `pnpm lint` passes
+- root `pnpm typecheck` passes
+- root `pnpm test` and `pnpm test:e2e` exist and currently no-op cleanly
+- web bootstrap builds successfully
+- api bootstrap builds successfully
+- `/api/health` responds successfully
+- Docker Compose starts PostgreSQL and MinIO locally
 
-### Integration
+## What Is Not In Place Yet
 
-- auth flow
-- chats flow
-- messages HTTP API
-- upload signing
-- prisma/database interactions where useful
+There are currently no real:
 
-### E2E
+- unit tests
+- integration tests
+- e2e tests
+- Prisma tests
+- websocket tests
 
-- login
-- open chat
-- send message
-- see message in second client
-- upload file basic flow
+That is acceptable for the current bootstrap phase, but not for later feature phases.
 
-## 2. Backend quality requirements
+## Required Quality Direction
 
-- DTO validation covered
-- error cases tested
-- access control tested
-- ws happy-path tested minimally
+As real features appear, coverage should grow in this order:
 
-## 3. Frontend quality requirements
+### Auth
 
-- critical components typed
-- UI states covered
-- no major hydration issues
-- no blocking console errors
+- validation cases
+- session lifecycle
+- refresh flow
+- protected route behavior
 
-## 4. Definition of done
+### Chats and messages
 
-Фича считается завершенной, если:
+- access control
+- pagination behavior
+- message mapping
+- CRUD edge cases
 
-- код написан;
-- типы корректны;
-- happy path работает;
-- базовые edge cases учтены;
-- UI state complete;
-- есть инструкция как проверить;
-- lint/typecheck/test проходят.
+### Realtime
 
-## 5. Commands to support
+- happy-path gateway behavior
+- idempotency by `clientId`
+- reconnect behavior
 
-В проекте должны быть команды:
+## Definition Of Done For Future Steps
 
-- `pnpm install`
-- `pnpm dev`
-- `pnpm build`
-- `pnpm lint`
-- `pnpm typecheck`
-- `pnpm test`
-- `pnpm test:e2e`
+A feature step is complete when:
+
+- code is implemented
+- types are correct
+- build passes
+- lint passes
+- typecheck passes
+- happy path works
+- obvious edge cases are handled
+- documentation or verification command is provided
+- one dedicated git commit is created for that finished step
+
+## Current Recommended Check Commands
+
+```bash
+pnpm build
+pnpm lint
+pnpm typecheck
+pnpm test
+pnpm test:e2e
+docker compose up -d
+curl http://127.0.0.1:4000/api/health
+```

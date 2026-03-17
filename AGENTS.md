@@ -23,15 +23,18 @@
 
 ## Текущее состояние репозитория
 
-- **Phase 0 (bootstrap)** уже реализован.
-- В репозитории уже есть:
-  - `apps/web`
-  - `apps/api`
-  - `packages/contracts`
-  - `docker-compose.yml`
-  - root scripts и базовые env examples
-- **Следующий phase по умолчанию — Phase 1 (auth)**.
-- Не пересобирать bootstrap заново без реальной причины.
+В репозитории уже реализован bootstrap-слой:
+
+- root workspace config
+- shared lint/format/typescript config
+- `packages/contracts`
+- `apps/api` с `GET /api/health`
+- `apps/web` с базовым App Router shell
+- `docker-compose.yml` для PostgreSQL и MinIO
+
+Сейчас проект находится **после Phase 0**.
+
+Следующий phase по умолчанию: **Phase 1 — auth**.
 
 ## Обязательные правила
 
@@ -77,6 +80,14 @@
 - Компоненты делать небольшими и композиционными.
 - Не смешивать data-fetching, state orchestration и presentation без необходимости.
 
+## Как работать в этом репозитории
+
+- Не пересобирать bootstrap заново.
+- Сначала изучать текущий код, потом вносить изменения.
+- Идти только по следующему незавершенному phase.
+- Не реализовывать будущие модули заранее “на вырост”, если текущий шаг этого не требует.
+- Если документ описывает target state, а код еще не дошел до него, считать код источником истины для текущей реализации, а docs — источником истины для следующего planned state.
+
 ## Что нужно отдавать по итогам каждого шага
 
 После каждого шага агент должен:
@@ -102,5 +113,5 @@
 
 1. `AGENTS.md`
 2. `docs/08-implementation-plan.md`
-3. `docs/01-product-requirements.md`
+3. текущий код репозитория
 4. остальные документы

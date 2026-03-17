@@ -4,34 +4,30 @@
 
 Завершено.
 
-## Цель
-
-Поднять монорепу и локальную инфраструктуру.
-
-## Нужно сделать
+## Что уже реализовано
 
 - pnpm workspace config
-- base tsconfig
-- shared eslint/prettier config
-- `apps/web` с Next.js App Router
-- `apps/api` с NestJS + Fastify
+- base TypeScript config
+- shared ESLint / Prettier config
+- `apps/web` с Next.js App Router shell
+- `apps/api` с NestJS + Fastify bootstrap
 - `packages/contracts`
-- Docker Compose:
-  - postgres
-  - minio
+- Docker Compose для PostgreSQL и MinIO
 - `.env.example` для web/api
 - root scripts
-- basic health endpoint
-- basic landing shell page in web
+- `GET /api/health`
+- базовая landing shell page в web
 
-## Acceptance criteria
+## Acceptance Criteria
+
+Уже подтверждено:
 
 - `pnpm install` работает
 - `pnpm dev` поднимает web и api
 - `docker compose up -d` поднимает postgres и minio
-- `/api/health` отвечает 200
+- `/api/health` отвечает `200`
 - web страница открывается
 
-## Примечание
+## Следующий Task
 
-Этот task уже закрыт в репозитории. Следующий рабочий task — `tasks/002-auth.md`.
+Следующий рабочий task: `tasks/002-auth.md`

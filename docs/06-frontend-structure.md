@@ -1,165 +1,74 @@
 # Frontend Structure — Next.js
 
-## 1. Router
+## Current Frontend State
 
-Использовать App Router.
+The frontend already exists as `apps/web` and includes:
 
-Пример структуры:
+- Next.js App Router setup
+- root layout
+- one bootstrap landing page
+- global stylesheet
+- public env loader for API base URL
+
+Current file shape:
+
+```txt
+apps/web/
+  app/
+    globals.css
+    layout.tsx
+    page.tsx
+  src/
+    shared/
+      config/
+        public-env.ts
+```
+
+## What The Current Frontend Does
+
+- renders a landing shell page
+- shows the current bootstrap status
+- reads the public API base URL from env with a safe local fallback
+- builds successfully as static content
+
+## What It Does Not Do Yet
+
+- auth pages
+- protected app shell
+- chat layout
+- sidebar
+- conversation UI
+- message composer
+- query state
+- websocket state
+
+## Planned Frontend Direction
+
+The intended structure still grows toward:
 
 ```txt
 apps/web/
   app/
     (auth)/
-      login/page.tsx
-      register/page.tsx
     (app)/
-      layout.tsx
-      chats/page.tsx
-      chat/[chatId]/page.tsx
-      settings/page.tsx
   src/
     features/
     entities/
     shared/
 ```
 
-## 2. Layers
+But these slices should be introduced only when Phase 1 and Phase 2 need them.
 
-### app
+## Recommended Next Frontend Step
 
-Роутинг, layout, providers.
+For auth phase, the next frontend additions should be:
 
-### features
+- `(auth)/login/page.tsx`
+- `(auth)/register/page.tsx`
+- `(app)/layout.tsx`
+- lightweight auth-aware route shell
+- shared API layer under `src/shared`
 
-- auth
-- chat-list
-- conversation
-- message-composer
-- attachments
-- search
-- settings
+## UI Rule For Future Work
 
-### entities
-
-- user
-- chat
-- message
-- upload
-
-### shared
-
-- ui
-- lib/api
-- lib/ws
-- hooks
-- utils
-- constants
-- schemas
-
-## 3. State strategy
-
-### TanStack Query
-
-Использовать для:
-
-- current user
-- chats list
-- messages history
-- search results
-- settings data
-
-### Zustand
-
-Использовать для:
-
-- local UI state
-- sidebar open/close
-- active chat UI state
-- composer draft
-- ephemeral modal state
-
-### Socket store
-
-Отдельный слой для live events:
-
-- connection status
-- typing map
-- presence map
-- optimistic message reconciliation
-
-## 4. Core pages
-
-### Login page
-
-- email/password form
-- validation
-- error states
-
-### Chats page
-
-- sidebar
-- current chat preview or redirect
-- responsive navigation
-
-### Chat page
-
-- header
-- message list
-- composer
-- right panel optional later
-
-### Settings page
-
-- profile
-- theme
-- session info later
-
-## 5. UI requirements
-
-- desktop-first shell + excellent mobile adaptation
-- skeleton states
-- empty states
-- error states
-- unread markers
-- clear selected chat state
-- smooth scrolling behavior
-
-## 6. Responsive behavior
-
-### Desktop
-
-- sidebar always visible
-- conversation pane visible
-
-### Tablet
-
-- compact sidebar
-- good paddings
-- sticky composer
-
-### Mobile
-
-- список чатов и активный чат как отдельные режимы
-- back navigation visible
-- composer fixed at bottom
-- touch-friendly hit areas
-
-## 7. Message UI states
-
-Сообщение может быть:
-
-- sending
-- sent
-- delivered
-- read
-- failed
-- edited
-- deleted
-
-## 8. Attachments UI
-
-- preview images
-- generic file cards for non-image
-- upload progress
-- retry on failure
-- cancel upload if feasible
+Keep the current shell style intentional and avoid collapsing into plain boilerplate once auth and chat views are added.

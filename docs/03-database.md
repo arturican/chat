@@ -1,201 +1,84 @@
 # Database Design — PulseChat
 
-## 1. ORM / migration policy
+## Current State
 
-- ORM: Prisma
-- PostgreSQL как основная БД
-- Миграции строго версионируются
-- Любое изменение схемы идет через migration
+There is **no Prisma schema in the repository yet**.
 
-## 2. Core tables
+What is already prepared:
 
-## users
+- PostgreSQL is available through `docker-compose.yml`
+- API env config already requires `DATABASE_URL`
+- the implementation plan already reserves auth as the next phase
 
-- id (uuid, pk)
-- email (unique)
-- password_hash
-- created_at
-- updated_at
+This means the database layer is planned and infrastructure-ready, but not implemented in code yet.
 
-## profiles
+## Next Database Step
 
-- user_id (pk, fk -> users.id)
-- username (unique)
-- display_name
-- bio
-- avatar_key
-- last_seen_at
-- created_at
-- updated_at
+The next concrete task is to add Prisma and the initial auth schema.
 
-## sessions
+Recommended first schema scope:
 
-- id (uuid, pk)
-- user_id (fk)
-- refresh_token_hash
-- user_agent
-- ip_address
-- expires_at
-- revoked_at
-- created_at
+### users
 
-## chats
-
-- id (uuid, pk)
-- type (`direct` | `group`)
-- title
-- avatar_key
-- created_by (fk -> users.id)
-- last_message_id (nullable)
-- created_at
-- updated_at
-
-## chat_members
-
-- chat_id (fk)
-- user_id (fk)
-- role (`owner` | `admin` | `member`)
-- joined_at
-- last_read_message_id (nullable)
-- muted_until (nullable)
-
-Unique:
-
-- (chat_id, user_id)
-
-## messages
-
-- id (uuid, pk)
-- chat_id (fk)
-- sender_id (fk -> users.id)
-- client_id (string, unique per sender)
-- type (`text` | `image` | `file` | `system`)
-- text (nullable)
-- reply_to_message_id (nullable, self fk)
-- edited_at (nullable)
-- deleted_at (nullable)
-- created_at
-
-## message_attachments
-
-- id (uuid, pk)
-- message_id (fk)
-- object_key
-- original_name
-- mime_type
-- size_bytes
-- width (nullable)
-- height (nullable)
-- duration_seconds (nullable)
-- created_at
-
-## message_reads
-
-- message_id (fk)
-- user_id (fk)
-- read_at
-
-Unique:
-
-- (message_id, user_id)
-
-## message_reactions
-
-- id (uuid, pk)
-- message_id (fk)
-- user_id (fk)
-- emoji
-- created_at
-
-Unique:
-
-- (message_id, user_id, emoji)
-
-## uploads
-
-- id (uuid, pk)
-- user_id (fk)
-- object_key
-- bucket
-- mime_type
-- size_bytes
-- status (`pending` | `uploaded` | `linked` | `failed`)
-- created_at
-- completed_at (nullable)
-
-## 3. Indexes
-
-### messages
-
-- index(chat_id, created_at desc)
-- index(sender_id, created_at desc)
-- index(reply_to_message_id)
-
-### chats
-
-- index(created_by)
-- index(updated_at desc)
-
-### chat_members
-
-- unique(chat_id, user_id)
-- index(user_id, joined_at desc)
+- `id`
+- `email`
+- `password_hash`
+- `created_at`
+- `updated_at`
 
 ### profiles
 
-- unique(username)
-- trigram index on username
-- trigram index on display_name
+- `user_id`
+- `username`
+- `display_name`
+- `bio`
+- `avatar_key`
+- `last_seen_at`
+- `created_at`
+- `updated_at`
 
-## 4. Search
+### sessions
 
-### Message search
+- `id`
+- `user_id`
+- `refresh_token_hash`
+- `user_agent`
+- `ip_address`
+- `expires_at`
+- `revoked_at`
+- `created_at`
 
-Использовать PostgreSQL full-text search:
+## Target Full Schema
 
-- `tsvector` по `messages.text`
-- GIN index
+The intended full schema still includes:
 
-### Fuzzy search
+- `users`
+- `profiles`
+- `sessions`
+- `chats`
+- `chat_members`
+- `messages`
+- `message_attachments`
+- `message_reads`
+- `message_reactions`
+- `uploads`
 
-Использовать `pg_trgm`:
+## Current Constraints For Future Work
 
-- для `profiles.username`
-- для `profiles.display_name`
-- для `chats.title`
+When Prisma is added, keep these rules:
 
-## 5. Modeling notes
+- PostgreSQL remains the source of truth
+- schema changes must go through migrations
+- cursor pagination is mandatory for messages
+- offset pagination must not be used for chat history
+- message persistence must happen before socket fanout
 
-### Direct chat uniqueness
+## Indexing Direction
 
-Для direct чатов надо предотвратить дублирование одного и того же pair chat.
-Решение:
+The planned indexing strategy remains:
 
-- при создании direct chat сначала искать существующий pair по участникам;
-- возможно хранить нормализованный pair key.
-
-### last_message_id
-
-Это denormalized field для ускорения списка чатов.
-
-### last_read_message_id
-
-Хранится в `chat_members` для быстрого расчета unread.
-
-## 6. Deletion policy
-
-- Пользователи физически не удаляются в MVP.
-- Сообщения удаляются soft delete через `deleted_at`.
-- Attachments в базе можно помечать как detached/obsolete в будущем.
-
-## 7. Example unread strategy
-
-Unread можно считать:
-
-- по `chat_members.last_read_message_id`
-- или по `message_reads` для точного статуса.
-
-В MVP:
-
-- для списка чатов использовать `last_read_message_id`;
-- для точных read receipts использовать `message_reads`.
+- `messages(chat_id, created_at desc)`
+- `messages(sender_id, created_at desc)`
+- `profiles(username)` unique
+- trigram indexes for user/chat search later
+- FTS for message search later

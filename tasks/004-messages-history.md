@@ -1,19 +1,30 @@
 # Task 004 — Messages History
 
+## Статус
+
+Ожидает завершения chats.
+
 ## Цель
 
-Показать историю чата.
+Показать историю чата поверх уже существующих auth и chat flows.
 
-## Нужно сделать
+## Зависимости
 
-- messages schema
-- cursor pagination
-- messages endpoint
-- conversation UI
-- composer UI basis
-- reply model support
+Нужно завершить:
 
-## Acceptance criteria
+- auth
+- chats
+
+## Что нужно сделать
+
+- добавить messages schema
+- реализовать cursor pagination
+- реализовать messages endpoint
+- сделать conversation UI
+- сделать composer UI basis
+- добавить reply model support
+
+## Acceptance Criteria
 
 - история загружается
 - pagination работает
