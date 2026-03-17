@@ -19,6 +19,7 @@ dist
 dist-ssr
 build
 out
+*.tsbuildinfo
 
 # Local environment files
 .env
